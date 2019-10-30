@@ -22,7 +22,7 @@ data_3 <- na.omit(data_2)
 summary(data_3)
 
 #write data to csv
-write.csv(data_3,"/home/jasp/DANA_4800/vancouver-crime-report/cleaned_data.csv")
+write.csv(data_3,"/home/jasp/DANA_4800/vancouver-crime-report/dana_team/cleaned_data.csv")
 
 #crimes per year 
 year_temp <- table(data_3[1])
@@ -33,7 +33,7 @@ barplot(year_temp)
 neighbourhood_temp <- table((data_3[4]))
 barplot(neighbourhood_temp)  
 
-# crimes per category
+# crimes per category 
 
 category_temp <- table(data_3[3])
 barplot(category_temp)
