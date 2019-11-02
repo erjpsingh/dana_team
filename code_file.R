@@ -1,3 +1,7 @@
+######################################################################################################
+####                                     CLEANING DATA                                             ###
+
+
 #Setting the environment. 
 
 getwd()
@@ -40,8 +44,89 @@ write.csv(data_3,"/home/jasp/DANA_4800/vancouver-crime-report/dana_team/cleaned_
 
 summary(data_4)
 
+
+####################################################################################################
+###                             SAMPLING TECHNIQUES                                              ###
+
+#link to learn about sample method     http://www.programmingr.com/examples/neat-tricks/sample-r-function/
+
+#first simple random sample with 10 % of data
+SRS_1_index <-sample (1:nrow(data_4), size=48232)
+SRS_1<-data_4[SRS_1_index,]
+
+
+
+
+######################################################################################################
+###                             VISUALIZATION WITH SRS_1                                           ###
+
+
+###UNIVARIATE 
+
+# How have the quantity of reported crimes changed over the years?
+univariate_year_table_SRS_1 <- table(SRS_1$YEAR)
+barplot(univariate_year_table_SRS_1,
+        main = "Rate of Crime over the years",
+        xlab='Years', 
+        ylab = 'Number of Crimes',
+        ylim = c(0,5000),
+        xaxp = c(300,700,5),
+        border = "white",
+        col = "tomato3")
+
+
+# Which periods of each day tend to have the most total reported crimes?
+
+time_of_day_table_SRS_1 <- table(SRS_1$Time_Of_Day)
+barplot(time_of_day_table_SRS_1,
+        main = "Crimes as per period fo the day",
+        xlab='Time of day', 
+        ylab = 'Number of Crimes',
+        ylim = c(0,12000),
+        xaxp = c(300,700,5),
+        border = "white",
+        col = "tomato3")
+
+
+#Which types of crimes have been the most commonly reported?
+
+
+category_table_SRS_1 <- table(SRS_1$TYPE)
+barplot(category_table_SRS_1,
+        main = "Crimes as per period fo the day",
+        xlab='Time of day', 
+        ylab = 'Type of Crimes',
+        ylim = c(0,21000),
+        xaxp = c(300,700,5),
+        border = "white",
+        col = "tomato3")
+
+
+
+
+# How many crimes have been reported in total over the population’s period for each neighbourhood?
+
+neighbourhood_table_SRS_1 <- table((SRS_1$NEIGHBOURHOOD))
+barplot(neighbourhood_table_SRS_1,
+        main = "Crimes as per period fo the day",
+        xlab='Time of day', 
+        ylab = 'Type of Crimes',
+        ylim = c(0,21000),
+        xaxp = c(300,700,5),
+        border = "white",
+        col = "tomato3"        )  
+
+
+
+
+
+
+
+
+
+
 #########################################################################################
-###                    VISUALIZATION                                                  ###
+###                    VISUALIZATION  OF POPULATION                                   ###
 
 ###UNIVARIATE 
 
