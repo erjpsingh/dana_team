@@ -4,8 +4,8 @@
 
 #Setting the environment. 
 
-getwd()
-setwd('/home/jasp/DANA_4800/vancouver-crime-report/dana_team')
+#getwd()
+#setwd('/home/jasp/DANA_4800/vancouver-crime-report/dana_team')
 
 
 #read data  this is of type list ie combination of vectors in R 
@@ -31,12 +31,52 @@ data_3$Time_Of_Day[data_3$HOUR >6 & data_3$HOUR <=12] <-2
 data_3$Time_Of_Day[data_3$HOUR >12 & data_3$HOUR <=18] <-3
 data_3$Time_Of_Day[data_3$HOUR >18 & data_3$HOUR <=24] <-4
 
+# Categorizing neighborhoods into 5 main ones
+data_3$NEIGHBOURHOOD <- gsub('Stanley Park', 'Downtown', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('West End', 'Downtown', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Central Business District', 'Downtown', data_3$NEIGHBOURHOOD)
+
+data_3$NEIGHBOURHOOD <- gsub('Arbutus Ridge', 'West Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Dunbar-Southlands', 'West Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Kerrisdale', 'West Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Kitsilano', 'West Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Musqueam', 'West Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Shaughnessy', 'West Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('West Point Grey', 'West Van', data_3$NEIGHBOURHOOD)
+
+data_3$NEIGHBOURHOOD <- gsub('Fairview', 'Central Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Marpole', 'Central Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Mount Pleasant', 'Central Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Oakridge', 'Central Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Riley Park', 'Central Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('South Cambie', 'Central Van', data_3$NEIGHBOURHOOD)
+
+data_3$NEIGHBOURHOOD <- gsub('Grandview-Woodland', 'Northeast Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Hastings-Sunrise', 'Northeast Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Strathcona', 'Northeast Van', data_3$NEIGHBOURHOOD)
+
+data_3$NEIGHBOURHOOD <- gsub('Kensington-Cedar Cottage', 'Southeast Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Killarney', 'Southeast Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Renfrew-Collingwood', 'Southeast Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Victoria-Fraserview', 'Southeast Van', data_3$NEIGHBOURHOOD)
+data_3$NEIGHBOURHOOD <- gsub('Sunset', 'Southeast Van', data_3$NEIGHBOURHOOD)
+
+# Remove blank neighbors (not NA)
+data_3 <- data_3[!(data_3$NEIGHBOURHOOD==""), ]
+
 #subset data by removing 2003 and 2019 partial data 
 data_4 <- subset(data_3, YEAR >2003 & YEAR <2019)
 
+# Make all columns "Factor" (categorical)
+data_4$Time_Of_Day <- factor(data_4$Time_Of_Day)
+data_4$NEIGHBOURHOOD <- factor(data_4$NEIGHBOURHOOD)
+data_4$YEAR <- factor(data_4$YEAR)
+data_4$TYPE <- factor(data_4$TYPE)
+data_4$HOUR <- factor(data_4$HOUR)
 
 #write data to csv
-write.csv(data_4,"/home/jasp/DANA_4800/vancouver-crime-report/dana_team/cleaned_data.csv")
+#write.csv(data_4,"/home/jasp/DANA_4800/vancouver-crime-report/dana_team/cleaned_data.csv")
+write.csv(data_4,"cleaned_data.csv")
 
 summary(data_4)
 
@@ -170,21 +210,49 @@ library(ggplot2)
 
 # How does the time of day affect the type of crime reported?
 
-time_vs_type_data <- table(SRS_1$Time_Of_Day, SRS_1$TYPE)
-time_vs_type_graph <- ggplot(time_vs_type_data)  + geom_bar()
+#time_vs_type_data <- table(SRS_1$Time_Of_Day, SRS_1$TYPE)
+#time_vs_type_graph <- ggplot(time_vs_type_data)  + geom_bar()
 
+ggplot(SRS_1, 
+       aes(x = factor(SRS_1$Time_Of_Day,labels = c("12am - 6am","6am - 12pm","12pm - 6pm", "6pm - 12am")),
+           fill = factor(SRS_1$TYPE
+           ))) + geom_bar(position = "dodge") + labs(y = "Frequency", 
+                                            fill = "Crime Types",
+                                            x = "Time Periods",
+                                            title = "Time of Day vs Crime Type") +
+        theme_minimal()
 
-
+chisq.test(SRS_1$Time_Of_Day, SRS_1$TYPE)
 
 # How does the neighbourhood affect the time (of day) the crime was reported?
 
+ggplot(SRS_1, 
+       aes(x = SRS_1$NEIGHBOURHOOD, 
+           fill = factor(SRS_1$Time_Of_Day, 
+                         labels = c("12am - 6am","6am - 12pm","12pm - 6pm", "6pm - 12am")
+                                ))) + 
+        geom_bar(position = "dodge") + labs(y = "Frequency", 
+                                            fill = "Time Periods",
+                                            x = "City Neighborhoods",
+                                            title = "Neighborhood vs Crime Report Time") +
+        theme_minimal()
 
-
+chisq.test(SRS_1$NEIGHBOURHOOD, SRS_1$Time_Of_Day)
 
 # How does the neighbourhood affect the type of crime reported?
                        
-                                   
+ggplot(SRS_1, 
+       aes(x = SRS_1$NEIGHBOURHOOD, 
+           fill = factor(SRS_1$TYPE 
+                         
+           ))) + 
+        geom_bar(position = "dodge") + labs(y = "Frequency", 
+                                            fill = "Crime Types",
+                                            x = "City Neighborhoods",
+                                            title = "Neighborhood vs Crime Type") +
+        theme_minimal()
 
+chisq.test(SRS_1$NEIGHBOURHOOD, SRS_1$TYPE)
 
 #########################################################################################
 ###                    VISUALIZATION  OF POPULATION                                   ###
