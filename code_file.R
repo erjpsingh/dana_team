@@ -132,18 +132,26 @@ barplot(time_of_day_table_SRS_1,
 
 
 #elemenating Homicide and Offence Against a Person
+var_type <- c('Break and Enter','Mischief','Other Theft','Theft from Vehicle'
+              ,'Theft of Vehicle','Vehicle Collision')
+var_number <-c(9068, 7172, 5746, 17896, 6103,2247)
 
+table_for_type <-as.table(as.matrix(var_type,var_number))
 
-category_table_SRS_1 <- table(SRS_1$TYPE)
-barplot(category_table_SRS_1,
+data_frame_TYPE <- data.frame(var_type, var_number)
+
+barplot(data_frame_TYPE$var_number,
         main = "Crimes as per period fo the day",
-        xlab='Time of day', 
-        ylab = 'Type of Crimes',
+        
+        xlab='Type of Crime ', 
+        ylab = 'Number of Crimes',
         ylim = c(0,21000),
         xaxp = c(300,700,5),
         border = "white",
-        col = "tomato3")
+        col = "tomato3",
+        las=2)
 
+axis(1, at=1:6, labels=var_type)
 
 
 
